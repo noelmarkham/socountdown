@@ -6,7 +6,6 @@ import service.StackOverflowProvider
 import play.api.templates.{Template1, Html}
 import play.api.test._
 import play.api.test.Helpers._
-import play.api.mvc.Result
 
 class ApplicationTest extends Specification with Mockito {
 
@@ -26,7 +25,7 @@ class ApplicationTest extends Specification with Mockito {
       mockNegativeView.render(anyInt) answers {i => Html(i.toString)}
 
       val controller = new Application(mockProvider, 1, 500, mockPositiveView, mockNegativeView)
-      val responseFromController:Result = controller.index(FakeRequest())
+      val responseFromController = controller.index(FakeRequest())
 
       status(responseFromController) must equalTo (OK)
       contentAsString(responseFromController) must equalTo (expectedScore.toString)
@@ -51,7 +50,7 @@ class ApplicationTest extends Specification with Mockito {
       mockNegativeView.render(anyInt) answers {i => Html(i.toString)}
 
       val controller = new Application(mockProvider, 1, 500, mockPositiveView, mockNegativeView)
-      val responseFromController:Result = controller.index(FakeRequest())
+      val responseFromController = controller.index(FakeRequest())
 
       status(responseFromController) must equalTo (OK)
       contentAsString(responseFromController) must equalTo (expectedScore.toString)
