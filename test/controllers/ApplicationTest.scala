@@ -30,6 +30,10 @@ class ApplicationTest extends Specification with Mockito {
       status(responseFromController) must equalTo (OK)
       val response = contentAsString(responseFromController)
       response must equalTo (expectedScore.toString)
+
+      there was one(mockProvider).getScoreForUser(defaultUser)
+      there was one(mockNegativeView).render(expectedScore)
+      there was no(mockPositiveView).render(anyInt)
     }
   }
 }
