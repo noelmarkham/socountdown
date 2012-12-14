@@ -1,12 +1,17 @@
 package controllers
 
-import play.api._
 import play.api.mvc._
+import service.{StackOverflowWebServiceProvider, StackOverflowProvider}
 
-object Application extends Controller {
+class Application(provider: StackOverflowProvider) extends Controller {
   
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
   }
-  
+
+  def scoreForUser(userId: Int): Int = {
+    0
+  }
 }
+
+object Application extends Application(StackOverflowWebServiceProvider)
