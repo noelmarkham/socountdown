@@ -2,16 +2,16 @@ package controllers
 
 import play.api.mvc._
 import service.{StackOverflowWebServiceProvider, StackOverflowProvider}
+import play.api.templates.{Template1, Html}
 
-class Application(provider: StackOverflowProvider) extends Controller {
+class Application(provider: StackOverflowProvider,
+                  positiveView: Template1[String, Html],
+                  negativeView: Template1[String, Html]) extends Controller {
   
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    Ok(positiveView.render("5"))
   }
 
-  def scoreForUser(userId: Int): Int = {
-    0
-  }
 }
 
-object Application extends Application(StackOverflowWebServiceProvider)
+object Application extends Application(StackOverflowWebServiceProvider, views.html.index, views.html.index)
