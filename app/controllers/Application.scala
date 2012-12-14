@@ -5,11 +5,11 @@ import service.{StackOverflowWebServiceProvider, StackOverflowProvider}
 import play.api.templates.{Template1, Html}
 
 class Application(provider: StackOverflowProvider,
-                  positiveView: Template1[String, Html],
-                  negativeView: Template1[String, Html]) extends Controller {
+                  positiveView: Template1[Int, Html],
+                  negativeView: Template1[Int, Html]) extends Controller {
   
   def index = Action {
-    Ok(positiveView.render("5"))
+    Ok(positiveView.render(5))
   }
 
 }

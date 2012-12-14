@@ -11,21 +11,25 @@ import play.api.mvc.Result
 class ApplicationTest extends Specification with Mockito {
 
   "The controller" should {
-    "put the correct value in the model" in {
+    "put the correct value in the model for the default user" in {
+
+      val defaultUser = 1
+      val expectedScore = 100
+
       val mockProvider = mock[StackOverflowProvider]
-      mockProvider.getScoreForUser(1) returns 100
+      mockProvider.getScoreForUser(defaultUser) returns expectedScore
 
-      val mockPositiveView = mock[Template1[String, Html]]
-      val mockNegativeView = mock[Template1[String, Html]]
+      val mockPositiveView = mock[Template1[Int, Html]]
+      val mockNegativeView = mock[Template1[Int, Html]]
 
-      mockPositiveView.render("5") returns Html("5")
+      mockPositiveView.render(anyInt) answers {i => Html(i.toString)}
 
       val controller = new Application(mockProvider, mockPositiveView, mockNegativeView)
       val responseFromController:Result = controller.index(FakeRequest())
 
       status(responseFromController) must equalTo (OK)
       val response = contentAsString(responseFromController)
-      response must equalTo ("5")
+      response must equalTo (expectedScore.toString)
     }
   }
 }
