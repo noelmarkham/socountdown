@@ -13,7 +13,7 @@ object StackOverflowWebServiceProvider extends StackOverflowProvider {
   val urlTemplate = "https://api.stackexchange.com/2.1/users/%d?order=desc&sort=reputation&site=stackoverflow"
   val QuoteRemovalPattern = "\"(.*)\"".r
 
-  def getScoreForUser(userId: Int): Promise[SoUser] = {
+  def getScoreForUser(userId: Int, threshold: Int): Promise[SoUser] = {
     WS.url(urlTemplate.format(userId)).get().map { response =>
       val stream = new GZIPInputStream(response.getAHCResponse.getResponseBodyAsStream)
       val json = Json.parse(Source.fromInputStream(stream).getLines().mkString)
@@ -24,17 +24,17 @@ object StackOverflowWebServiceProvider extends StackOverflowProvider {
       val rep = (json \ "items" \\ "reputation").mkString.toInt
       val creationDate = new Date(TimeUnit.SECONDS.toMillis((json \ "items" \\ "creation_date").mkString.toLong))
 
-      val expectedDate = projectedDate(rep, creationDate).get.toString
+      val expectedDate = projectedDate(rep, threshold, creationDate).get.toString
 
       SoUser(name, imageUrl, soPage, rep, expectedDate)
     }
   }
 
-  def projectedDate(currentRep: Int, startDate: Date): Option[Date] = {
-    if(currentRep > 1000000) None
+  def projectedDate(currentRep: Int, threshold: Int, startDate: Date): Option[Date] = {
+    if(currentRep > threshold) None
     else {
       val millisTillNow = System.currentTimeMillis() - startDate.getTime
-      val newtimestamp = ((millisTillNow / currentRep) * 1000000) + startDate.getTime
+      val newtimestamp = ((millisTillNow / currentRep) * threshold) + startDate.getTime
       Some(new Date(newtimestamp))
     }
   }

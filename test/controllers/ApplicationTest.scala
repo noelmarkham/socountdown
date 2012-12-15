@@ -15,12 +15,13 @@ class ApplicationTest extends Specification with Mockito {
     "put the correct value in the model for the default user in the negative case" in {
 
       val defaultUser = 1
+      val threshold = 500
       val expectedScore = 100
 
       val dummyUser = SoUser("name", "image_url", "so_url", expectedScore, "creation_date")
 
       val mockProvider = mock[StackOverflowProvider]
-      mockProvider.getScoreForUser(defaultUser) returns Promise.pure(dummyUser)
+      mockProvider.getScoreForUser(defaultUser, threshold) returns Promise.pure(dummyUser)
 
       val mockPositiveView = mock[Template1[SoUser, Html]]
       val mockNegativeView = mock[Template1[SoUser, Html]]
@@ -28,13 +29,13 @@ class ApplicationTest extends Specification with Mockito {
       mockPositiveView.render(any[SoUser]) answers {u => Html(u.toString)}
       mockNegativeView.render(any[SoUser]) answers {u => Html(u.toString)}
 
-      val controller = new Application(mockProvider, 1, 500, mockPositiveView, mockNegativeView)
+      val controller = new Application(mockProvider, 1, threshold, mockPositiveView, mockNegativeView)
       val AsyncResult(responseFromController) = controller.index(FakeRequest())
 
       status(await(responseFromController)) must equalTo (OK)
       contentAsString(await(responseFromController)) must equalTo (dummyUser.toString)
 
-      there was one(mockProvider).getScoreForUser(defaultUser)
+      there was one(mockProvider).getScoreForUser(defaultUser, threshold)
       there was one(mockNegativeView).render(dummyUser)
       there was no(mockPositiveView).render(any[SoUser])
     }
@@ -42,12 +43,13 @@ class ApplicationTest extends Specification with Mockito {
     "put the correct value in the model for the default user in the positive case" in {
 
       val defaultUser = 1
+      val threshold = 500
       val expectedScore = 5000
 
       val dummyUser = SoUser("name", "image_url", "so_url", expectedScore, "creation_date")
 
       val mockProvider = mock[StackOverflowProvider]
-      mockProvider.getScoreForUser(defaultUser) returns Promise.pure(dummyUser)
+      mockProvider.getScoreForUser(defaultUser, threshold) returns Promise.pure(dummyUser)
 
       val mockPositiveView = mock[Template1[SoUser, Html]]
       val mockNegativeView = mock[Template1[SoUser, Html]]
@@ -55,13 +57,13 @@ class ApplicationTest extends Specification with Mockito {
       mockPositiveView.render(any[SoUser]) answers {u => Html(u.toString)}
       mockNegativeView.render(any[SoUser]) answers {u => Html(u.toString)}
 
-      val controller = new Application(mockProvider, 1, 500, mockPositiveView, mockNegativeView)
+      val controller = new Application(mockProvider, 1, threshold, mockPositiveView, mockNegativeView)
       val AsyncResult(responseFromController) = controller.index(FakeRequest())
 
       status(await(responseFromController)) must equalTo (OK)
       contentAsString(await(responseFromController)) must equalTo (dummyUser.toString)
 
-      there was one(mockProvider).getScoreForUser(defaultUser)
+      there was one(mockProvider).getScoreForUser(defaultUser, threshold)
       there was one(mockPositiveView).render(dummyUser)
       there was no(mockNegativeView).render(any[SoUser])
     }
