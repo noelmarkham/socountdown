@@ -11,7 +11,7 @@ import play.Logger
 
 object StackOverflowWebServiceProvider extends StackOverflowProvider {
 
-  val urlTemplate = "https://api.stackexchange.com/2.1/users/%d?order=desc&sort=reputation&site=stackoverflow"
+  val urlTemplate = "https://api.stackexchange.com/2.1/users/%d?order=desc&sort=reputation&site=stackoverflow&key=wGcTdbB*YEIh80zs5gyC*Q(("
   val QuoteRemovalPattern = "\"(.*)\"".r
 
   def getScoreForUser(userId: Int, threshold: Int): Promise[SoUser] = {

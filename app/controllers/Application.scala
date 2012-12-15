@@ -17,7 +17,7 @@ class Application(provider: StackOverflowProvider,
 
   def indexForUser(id: Int) = Action {
     Async {
-      val scorePromise = Cache.getOrElse("json", 600){
+      val scorePromise = Cache.getOrElse("json", 60){
         Logger.info("Refreshing JSON from cache")
         provider.getScoreForUser(id, threshold)
       }
