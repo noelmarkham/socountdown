@@ -7,6 +7,7 @@ import play.api.libs.json.Json
 import java.util.zip.GZIPInputStream
 import java.util.Date
 import actors.threadpool.TimeUnit
+import play.Logger
 
 object StackOverflowWebServiceProvider extends StackOverflowProvider {
 
@@ -17,14 +18,18 @@ object StackOverflowWebServiceProvider extends StackOverflowProvider {
     WS.url(urlTemplate.format(userId)).get().map { response =>
       val stream = new GZIPInputStream(response.getAHCResponse.getResponseBodyAsStream)
       val json = Json.parse(Source.fromInputStream(stream).getLines().mkString)
-      println(json)
+      Logger.info(json.toString())
       val QuoteRemovalPattern(name) = (json \ "items" \\ "display_name").mkString
       val imageUrl = (json \ "items" \\ "profile_image").mkString
       val soPage = (json \ "items" \\ "link").mkString
       val rep = (json \ "items" \\ "reputation").mkString.toInt
       val creationDate = new Date(TimeUnit.SECONDS.toMillis((json \ "items" \\ "creation_date").mkString.toLong))
-
       val expectedDate = projectedDate(rep, threshold, creationDate).get.toString
+
+      val quotaRemaining = (json \ "quota_remaining")
+      val quotaMax = (json \ "quota_max")
+
+      Logger.info("Stack Overflow API queries quota remaining: [%s] of max [%s]".format(quotaRemaining, quotaMax))
 
       SoUser(name, imageUrl, soPage, rep, expectedDate)
     }

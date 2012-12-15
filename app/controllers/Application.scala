@@ -5,6 +5,7 @@ import service.{SoUser, StackOverflowWebServiceProvider, StackOverflowProvider}
 import play.api.templates.{Template1, Html}
 import play.api.Play.current
 import play.api.cache.Cache
+import play.Logger
 
 class Application(provider: StackOverflowProvider,
                   defaultUser: Int,
@@ -16,7 +17,10 @@ class Application(provider: StackOverflowProvider,
 
   def indexForUser(id: Int) = Action {
     Async {
-      val scorePromise = Cache.getOrElse("json", 600)(provider.getScoreForUser(id, threshold))
+      val scorePromise = Cache.getOrElse("json", 600){
+        Logger.info("Refreshing JSON from cache")
+        provider.getScoreForUser(id, threshold)
+      }
       scorePromise.map {
         case SoUser(name, imageUrl, soPage, rep, date) =>
           if (rep < threshold) Ok(negativeView.render(SoUser(name, imageUrl, soPage, rep, date)))
