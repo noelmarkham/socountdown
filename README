@@ -1,4 +1,4 @@
-This is your new Play 2.0 application
-=====================================
+Stack Overflow Countdown
+========================
 
-This file will be packaged with your application, when using `play dist`.
+A small Play application to understand trivial dependency injection and controller unit testing.
