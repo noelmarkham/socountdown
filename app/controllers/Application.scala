@@ -1,21 +1,23 @@
 package controllers
 
 import play.api.mvc._
-import service.{StackOverflowWebServiceProvider, StackOverflowProvider}
+import service.{SoUser, StackOverflowWebServiceProvider, StackOverflowProvider}
 import play.api.templates.{Template1, Html}
 
 class Application(provider: StackOverflowProvider,
                   defaultUser: Int,
                   threshold: Int,
-                  positiveView: Template1[Int, Html],
-                  negativeView: Template1[Int, Html]) extends Controller {
+                  positiveView: Template1[SoUser, Html],
+                  negativeView: Template1[SoUser, Html]) extends Controller {
   
   def index = indexForUser(defaultUser)
 
   def indexForUser(id: Int) = Action {
     Async {
-      provider.getScoreForUser(id).map { score =>
-        if (score < threshold) Ok(negativeView.render(score)) else Ok(positiveView.render(score))
+      provider.getScoreForUser(id).map {
+        case SoUser(imageUrl, rep, started) =>
+          if (rep < threshold) Ok(negativeView.render(SoUser(imageUrl, rep, started)))
+          else Ok(positiveView.render(SoUser(imageUrl, rep, started)))
       }
     }
   }
