@@ -13,16 +13,19 @@ class Application(provider: StackOverflowProvider,
   def index = indexForUser(defaultUser)
 
   def indexForUser(id: Int) = Action {
-    val score = provider.getScoreForUser(id)
-    println("Received score [%d] for user [%d]".format(score, id))
-    if(score < threshold) Ok(negativeView.render(score)) else Ok(positiveView.render(score))
+    Async {
+      provider.getScoreForUser(id).map { score =>
+
+        if (score < threshold) Ok(negativeView.render(score)) else Ok(positiveView.render(score))
+      }
+    }
   }
 }
 
 object Application extends Application(
   StackOverflowWebServiceProvider,
-  1,
+  22656,
   1000000,
-  views.html.index,
-  views.html.index
+  views.html.positive,
+  views.html.negative
 )

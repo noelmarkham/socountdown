@@ -6,6 +6,8 @@ import service.StackOverflowProvider
 import play.api.templates.{Template1, Html}
 import play.api.test._
 import play.api.test.Helpers._
+import play.api.libs.concurrent.Promise
+import play.api.mvc.AsyncResult
 
 class ApplicationTest extends Specification with Mockito {
 
@@ -16,7 +18,7 @@ class ApplicationTest extends Specification with Mockito {
       val expectedScore = 100
 
       val mockProvider = mock[StackOverflowProvider]
-      mockProvider.getScoreForUser(defaultUser) returns expectedScore
+      mockProvider.getScoreForUser(defaultUser) returns Promise.pure(expectedScore)
 
       val mockPositiveView = mock[Template1[Int, Html]]
       val mockNegativeView = mock[Template1[Int, Html]]
@@ -25,10 +27,10 @@ class ApplicationTest extends Specification with Mockito {
       mockNegativeView.render(anyInt) answers {i => Html(i.toString)}
 
       val controller = new Application(mockProvider, 1, 500, mockPositiveView, mockNegativeView)
-      val responseFromController = controller.index(FakeRequest())
+      val AsyncResult(responseFromController) = controller.index(FakeRequest())
 
-      status(responseFromController) must equalTo (OK)
-      contentAsString(responseFromController) must equalTo (expectedScore.toString)
+      status(await(responseFromController)) must equalTo (OK)
+      contentAsString(await(responseFromController)) must equalTo (expectedScore.toString)
 
       there was one(mockProvider).getScoreForUser(defaultUser)
       there was one(mockNegativeView).render(expectedScore)
@@ -41,7 +43,7 @@ class ApplicationTest extends Specification with Mockito {
       val expectedScore = 5000
 
       val mockProvider = mock[StackOverflowProvider]
-      mockProvider.getScoreForUser(defaultUser) returns expectedScore
+      mockProvider.getScoreForUser(defaultUser) returns Promise.pure(expectedScore)
 
       val mockPositiveView = mock[Template1[Int, Html]]
       val mockNegativeView = mock[Template1[Int, Html]]
@@ -50,10 +52,10 @@ class ApplicationTest extends Specification with Mockito {
       mockNegativeView.render(anyInt) answers {i => Html(i.toString)}
 
       val controller = new Application(mockProvider, 1, 500, mockPositiveView, mockNegativeView)
-      val responseFromController = controller.index(FakeRequest())
+      val AsyncResult(responseFromController) = controller.index(FakeRequest())
 
-      status(responseFromController) must equalTo (OK)
-      contentAsString(responseFromController) must equalTo (expectedScore.toString)
+      status(await(responseFromController)) must equalTo (OK)
+      contentAsString(await(responseFromController)) must equalTo (expectedScore.toString)
 
       there was one(mockProvider).getScoreForUser(defaultUser)
       there was one(mockPositiveView).render(anyInt)
