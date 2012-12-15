@@ -8,4 +8,8 @@ trait StackOverflowProvider {
   def getScoreForUser(userId: Int): Promise[SoUser]
 }
 
-case class SoUser(imageUrl: String, rep: Int, started: Date)
+case class SoUser(name: String,
+                  imageUrl: String,
+                  soPage: String,
+                  rep: Int,
+                  started: Date)

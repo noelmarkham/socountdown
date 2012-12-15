@@ -1,3 +1,12 @@
 @(message: service.SoUser)
-
-NO: @message
+<html>
+  <head>
+    <title>Has @Html(message.name) Reached 1,000,000 yet?</title>
+  </head>
+  <body>
+    <h1>Has @Html(message.name) Reached 1,000,000 yet?</h1>
+    <a href=@Html(message.soPage)><img src=@Html(message.imageUrl)/></a>
+    <h2>NO</h2>
+    <p>Current score: @message.rep</p>
+  </body>
+</html>
