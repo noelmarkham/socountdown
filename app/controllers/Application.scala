@@ -15,9 +15,9 @@ class Application(provider: StackOverflowProvider,
   def indexForUser(id: Int) = Action {
     Async {
       provider.getScoreForUser(id).map {
-        case SoUser(name, imageUrl, soPage, rep, started) =>
-          if (rep < threshold) Ok(negativeView.render(SoUser(name, imageUrl, soPage, rep, started)))
-          else Ok(positiveView.render(SoUser(name, imageUrl, soPage, rep, started)))
+        case SoUser(name, imageUrl, soPage, rep, date) =>
+          if (rep < threshold) Ok(negativeView.render(SoUser(name, imageUrl, soPage, rep, date)))
+          else Ok(positiveView.render(SoUser(name, imageUrl, soPage, rep, date)))
       }
     }
   }

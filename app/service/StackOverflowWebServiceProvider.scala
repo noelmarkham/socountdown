@@ -24,7 +24,18 @@ object StackOverflowWebServiceProvider extends StackOverflowProvider {
       val rep = (json \ "items" \\ "reputation").mkString.toInt
       val creationDate = new Date(TimeUnit.SECONDS.toMillis((json \ "items" \\ "creation_date").mkString.toLong))
 
-      SoUser(name, imageUrl, soPage, rep, creationDate)
+      val expectedDate = projectedDate(rep, creationDate).get.toString
+
+      SoUser(name, imageUrl, soPage, rep, expectedDate)
+    }
+  }
+
+  def projectedDate(currentRep: Int, startDate: Date): Option[Date] = {
+    if(currentRep > 1000000) None
+    else {
+      val millisTillNow = System.currentTimeMillis() - startDate.getTime
+      val newtimestamp = ((millisTillNow / currentRep) * 1000000) + startDate.getTime
+      Some(new Date(newtimestamp))
     }
   }
 }

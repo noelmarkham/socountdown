@@ -8,7 +8,6 @@ import play.api.test._
 import play.api.test.Helpers._
 import play.api.libs.concurrent.Promise
 import play.api.mvc.AsyncResult
-import java.util.Date
 
 class ApplicationTest extends Specification with Mockito {
 
@@ -17,9 +16,8 @@ class ApplicationTest extends Specification with Mockito {
 
       val defaultUser = 1
       val expectedScore = 100
-      val creationDate = new Date()
 
-      val dummyUser = SoUser("image_url", expectedScore, creationDate)
+      val dummyUser = SoUser("name", "image_url", "so_url", expectedScore, "creation_date")
 
       val mockProvider = mock[StackOverflowProvider]
       mockProvider.getScoreForUser(defaultUser) returns Promise.pure(dummyUser)
@@ -45,9 +43,8 @@ class ApplicationTest extends Specification with Mockito {
 
       val defaultUser = 1
       val expectedScore = 5000
-      val creationDate = new Date()
 
-      val dummyUser = SoUser("image_url", expectedScore, creationDate)
+      val dummyUser = SoUser("name", "image_url", "so_url", expectedScore, "creation_date")
 
       val mockProvider = mock[StackOverflowProvider]
       mockProvider.getScoreForUser(defaultUser) returns Promise.pure(dummyUser)
